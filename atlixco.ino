@@ -2,8 +2,7 @@
 #define shift1_data 4
 #define shift1_latch 5
 #define shift1_clock 6
-byte shift1=0;
-
+  
 // Step motor
 #define stepper_in1 0 
 #define stepper_in2 1 
@@ -11,7 +10,7 @@ byte shift1=0;
 #define stepper_in4 3 
 int stepper_step=0; 
 int stepper_steps_left=0; 
-int stepper_delay=1000;
+int stepper_delay=800;
 boolean stepper_direction=true;
 
 // Button
@@ -35,71 +34,38 @@ void loop() {
     delayMicroseconds(stepper_delay);
     stepper_run(); 
     stepper_steps_left--; 
-    //Serial.println(stepper_steps_left);
+    Serial.println(stepper_steps_left);
   }
 } 
 
 void stepper_run() { 
   switch(stepper_step) { 
-    case 0: 
-    bitWrite(shift1, stepper_in1, 0); 
-    bitWrite(shift1, stepper_in2, 0); 
-    bitWrite(shift1, stepper_in3, 0); 
-    bitWrite(shift1, stepper_in4, 1); 
-    write_shift1();
+    case 0: // 00000001
+    write_shift1(1);
     break; 
-    case 1: 
-    bitWrite(shift1, stepper_in1, 0); 
-    bitWrite(shift1, stepper_in2, 0); 
-    bitWrite(shift1, stepper_in3, 1); 
-    bitWrite(shift1, stepper_in4, 1); 
-    write_shift1();
+    case 1: // 00000011
+    write_shift1(3);
     break; 
-    case 2: 
-    bitWrite(shift1, stepper_in1, 0); 
-    bitWrite(shift1, stepper_in2, 0); 
-    bitWrite(shift1, stepper_in3, 1); 
-    bitWrite(shift1, stepper_in4, 0); 
-    write_shift1();
+    case 2: // 00000010
+    write_shift1(2);
     break; 
-    case 3: 
-    bitWrite(shift1, stepper_in1, 0); 
-    bitWrite(shift1, stepper_in2, 1); 
-    bitWrite(shift1, stepper_in3, 1); 
-    bitWrite(shift1, stepper_in4, 0); 
-    write_shift1();
+    case 3: // 00000110
+    write_shift1(6);
     break; 
-    case 4: 
-    bitWrite(shift1, stepper_in1, 0); 
-    bitWrite(shift1, stepper_in2, 1); 
-    bitWrite(shift1, stepper_in3, 0); 
-    bitWrite(shift1, stepper_in4, 0); 
-    write_shift1();
+    case 4: // 00000100
+    write_shift1(4);
     break; 
-    case 5: 
-    bitWrite(shift1, stepper_in1, 1); 
-    bitWrite(shift1, stepper_in2, 1); 
-    bitWrite(shift1, stepper_in3, 0); 
-    bitWrite(shift1, stepper_in4, 0); 
-    write_shift1();
+    case 5: // 00001100
+    write_shift1(12);
     break; 
-    case 6: 
-    bitWrite(shift1, stepper_in1, 1); 
-    bitWrite(shift1, stepper_in2, 0); 
-    bitWrite(shift1, stepper_in3, 0); 
-    bitWrite(shift1, stepper_in4, 0); 
-    write_shift1();
+    case 6: // 00001000
+    write_shift1(8);
     break; 
-    case 7: 
-    bitWrite(shift1, stepper_in1, 1); 
-    bitWrite(shift1, stepper_in2, 0); 
-    bitWrite(shift1, stepper_in3, 0); 
-    bitWrite(shift1, stepper_in4, 1); 
-    write_shift1();
+    case 7: // 00001001
+    write_shift1(9);
     break; 
     default: 
-    shift1=0;
-    write_shift1();
+    write_shift1(0);
     break; 
   } 
   stepper_set_direction(); 
@@ -120,8 +86,8 @@ void stepper_set_direction() {
   } 
 }
 
-void write_shift1() {
+void write_shift1(int shift) {
   digitalWrite(shift1_latch, LOW);
-  shiftOut(shift1_data, shift1_clock, LSBFIRST, shift1);
+  shiftOut(shift1_data, shift1_clock, LSBFIRST, shift);
   digitalWrite(shift1_latch, HIGH);
 }
